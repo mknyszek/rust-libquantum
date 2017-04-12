@@ -31,6 +31,7 @@
 //!
 //! Adding higher-level bindings should be delegated to a new crate in order
 //! to keep this crate as lean as possible.
+#![crate_type = "lib"]
 
 mod quantum_sys;
 mod qureg;
