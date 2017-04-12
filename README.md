@@ -18,7 +18,13 @@ This library targets the newest stable version of Rust.
 
 ### libquantum Development Library
 
-On Linux, install these through your favorite package management tool, or
+Note: the below instructions should work, but have only been tested for Linux
+since I don't actually have access to development machines for any other
+systems supported by both Rust and libquantum.
+
+#### Linux
+
+Install libquantum through your favorite package management tool, or
 through [libquantum's website](http://www.libquantum.de/).
 
 For example, on Ubuntu one can install libquantum through the command
@@ -27,27 +33,18 @@ For example, on Ubuntu one can install libquantum through the command
 sudo apt-get install libquantum-dev
 ```
 
-At compile-time, the library uses `rust-bindgen` to generate FFI-level
-bindings from the libquantum header file, which it expects to find in
-`/usr/include/quantum.h`
+#### Mac OS X
 
-Unfortunately, no other operating systems are officially supported because
-I have no way to test on them. Presumably, however, libquantum works on
-Mac OS X, and you can install it via homebrew
+Presumably libquantum works on Mac OS X, and you can install it via homebrew
 
 ```
 brew install libquantum
 ```
 
-You may have to change the header file's path in `build.rs`, but otherwise I
-don't see why it shouldn't work. A similar method should work for getting it
-set up on FreeBSD and other operating systems supported by libquantum.
+## Installation
 
-The hard-coded header file path should be fixed soon.
-
-### Installation
-
-If you're using Cargo to manage your project, you can download through [crates.io](http://crates.io).
+If you're using Cargo to manage your project, you can install through
+[crates.io](http://crates.io).
 
 ```
 [dependencies]
@@ -63,7 +60,13 @@ git = "https://github.com/mknyszek/rust-libquantum"
 
 Finally, you can also just clone this repository and compile with `cargo build`
 
-### Contributing
+## Troubleshooting
+
+If for some reason the build script cannot find `quantum.h` on your system, you
+can set the `LIBQUANTUM_INCLUDE` environment variable to be the path to
+`quantum.h`.
+
+## Contributing
 
 Just submit a pull request, any help in getting these bindings general and
 complete is welcome. Some rules, though:
@@ -71,4 +74,5 @@ complete is welcome. Some rules, though:
 * Any new code must be well-documented, whether or not it appears in the
   public interface.
 * If you want to change an existing public interface, give me a good reason.
+* Please add tests for any new functionality you create.
 
