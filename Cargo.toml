@@ -1,0 +1,11 @@
+[package]
+name = "libquantum"
+version = "0.1.0"
+authors = ["Michael Anthony Knyszek <mknyszek@gmail.com>"]
+build = "build.rs"
+
+[lib]
+crate-type = ["dylib"]
+
+[build-dependencies]
+bindgen = "0.20"
