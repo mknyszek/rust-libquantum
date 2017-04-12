@@ -193,13 +193,3 @@ impl Drop for QuReg {
         unsafe { quantum_sys::quantum_delete_qureg(self.reg_ptr()); }
     }
 }
-
-#[cfg(test)]
-mod tests {
-    use qureg::QuReg;
-
-    #[test]
-    fn width() {
-        assert_eq!(QuReg::new(2, 0).width(), 2);
-    }
-}
