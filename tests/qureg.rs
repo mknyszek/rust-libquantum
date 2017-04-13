@@ -29,6 +29,39 @@ fn toffoli() {
 }
 
 #[test]
+fn and_gate() {
+    let mut q = QuReg::new(2, 0b11);
+    q.add_scratch(1);
+    q.toffoli(2, 1, 0);
+    assert_eq!(q.measure_bit(0), true);
+}
+
+#[test]
+fn sigma_x() {
+    let mut q = QuReg::new(1, 0);
+    q.sigma_x(0);
+    assert_eq!(q.measure(), 1);
+}
+
+#[test]
+fn sigma_y() {
+    let mut q = QuReg::new(1, 1);
+    q.hadamard(0);
+    q.sigma_y(0);
+    q.hadamard(0);
+    assert_eq!(q.measure(), 0);
+}
+
+#[test]
+fn sigma_z() {
+    let mut q = QuReg::new(1, 1);
+    q.hadamard(0);
+    q.sigma_z(0);
+    q.hadamard(0);
+    assert_eq!(q.measure(), 0);
+}
+
+#[test]
 fn hadamard() {
     let mut q = QuReg::new(1, 0);
     q.hadamard(0);
