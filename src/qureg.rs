@@ -20,6 +20,8 @@
 
 use quantum_sys::{self, quantum_reg};
 
+use std::fmt;
+
 /// A quantum register.
 ///
 /// This structure is a wrapper around `quantum_reg` from the libquantum
@@ -184,6 +186,12 @@ impl QuReg {
     #[inline]
     unsafe fn reg_ptr(&mut self) -> *mut quantum_reg {
         &mut self.reg as *mut quantum_reg
+    }
+}
+
+impl fmt::Debug for QuReg {
+    fn fmt(&self, f: &mut fmt::Formatter) -> fmt::Result {
+        write!(f, "QuReg({})", self.width())
     }
 }
 
