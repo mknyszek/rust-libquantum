@@ -20,6 +20,7 @@
 
 use quantum_sys::{self, quantum_reg};
 
+use std::ops;
 use std::fmt;
 
 /// A quantum register.
@@ -179,8 +180,30 @@ impl QuReg {
     }
 
     /// Measures a qubit in the quantum register without discarding it.
-    pub fn measure_bit_preserve(&mut self, pos: usize) -> usize {
-        unsafe { quantum_sys::quantum_bmeasure_bitpreserve(pos as i32, self.reg_ptr()) as usize }
+    pub fn measure_bit_preserve(&mut self, pos: usize) -> bool {
+        unsafe { quantum_sys::quantum_bmeasure_bitpreserve(pos as i32, self.reg_ptr()) as usize != 0 }
+    }
+
+    /// Measures the `width` least significant bits of the register, discarding them.
+    pub fn measure_width(&mut self, width: usize) -> usize {
+        let mut result = 0;
+        for i in 0..width {
+            result |= (self.measure_bit(0) as usize) << i;
+        }
+        result
+    }
+
+    /// Measures the bit indicies specified in an iterator.
+    ///
+    /// This method does not discard the qubits.
+    pub fn measure_partial<I>(&mut self, iter: I) -> usize 
+        where I: IntoIterator<Item=usize> {
+
+        let mut result = 0;
+        for i in iter {
+            result |= (self.measure_bit_preserve(i) as usize) << i;
+        }
+        result
     }
 
     #[inline]

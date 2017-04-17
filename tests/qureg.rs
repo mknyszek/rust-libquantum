@@ -76,3 +76,24 @@ fn walsh() {
     q.walsh(3);
     assert_eq!(q.measure(), 0b110);
 }
+
+#[test]
+fn measure_bit() {
+    let mut q = QuReg::new(3, 0b110);
+    assert_eq!(q.measure_bit_preserve(1), true);
+    assert_eq!(q.width(), 3);
+    assert_eq!(q.measure_bit(0), false);
+    assert_eq!(q.width(), 2);
+}
+
+#[test]
+fn measure_partial() {
+    let mut q1 = QuReg::new(3, 0b110);
+    assert_eq!(q1.measure_width(2), 0b10);
+    assert_eq!(q1.width(), 1);
+    let q2 = QuReg::new(2, 0b10);
+    let mut q3 = q1.tensor(q2);
+    assert_eq!(q3.measure_partial(0..2), 0b10);
+    assert_eq!(q3.width(), 3);
+    assert_eq!(q3.measure_partial(..), 0b110);
+}
