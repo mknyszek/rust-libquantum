@@ -20,7 +20,6 @@
 
 use quantum_sys::{self, quantum_reg};
 
-use std::ops;
 use std::fmt;
 
 /// A quantum register.
