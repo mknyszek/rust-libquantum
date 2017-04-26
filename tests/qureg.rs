@@ -95,5 +95,4 @@ fn measure_partial() {
     let mut q3 = q1.tensor(q2);
     assert_eq!(q3.measure_partial(0..2), 0b10);
     assert_eq!(q3.width(), 3);
-    assert_eq!(q3.measure_partial(..), 0b110);
 }

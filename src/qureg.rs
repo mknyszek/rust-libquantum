@@ -40,7 +40,8 @@ impl QuReg {
     /// `width` bits of the `init` value will be used in initialization.
     pub fn new(width: usize, init: u64) -> QuReg {
         QuReg {
-            reg: unsafe { quantum_sys::quantum_new_qureg(init, width as i32) }
+            reg: unsafe { quantum_sys::quantum_new_qureg(init, width as i32) },
+            scratch: 0
         }
     }
 
@@ -72,77 +73,80 @@ impl QuReg {
     /// Consumes the two registers to produce a new register which will contain
     /// the tensor product of the two (loosely maps to concatenation).
     pub fn tensor(mut self, mut other: QuReg) -> QuReg {
+        assert_eq!(self.scratch, 0);
+        assert_eq!(other.scratch, 0);
         QuReg {
-            reg: unsafe { quantum_sys::quantum_kronecker(self.reg_ptr(), other.reg_ptr()) } 
+            reg: unsafe { quantum_sys::quantum_kronecker(self.reg_ptr(), other.reg_ptr()) },
+            scratch: 0
         }
     }
     
     /// Applies a controlled-NOT gate between two qubits in the quantum register.
     pub fn cnot(&mut self, control: usize, target: usize) {
-        debug_assert!(control < self.reg.width);
-        debug_assert!(target < self.reg.width);
+        debug_assert!(control < (self.reg.width as usize));
+        debug_assert!(target < (self.reg.width as usize));
         unsafe { quantum_sys::quantum_cnot(control as i32, target as i32, self.reg_ptr()) }
     }
 
     /// Applies a Toffoli gate between three qubits in the quantum register.
     pub fn toffoli(&mut self, control1: usize, control2: usize, target: usize) {
-        debug_assert!(control1 < self.reg.width);
-        debug_assert!(control2 < self.reg.width);
-        debug_assert!(target < self.reg.width);
+        debug_assert!(control1 < (self.reg.width as usize));
+        debug_assert!(control2 < (self.reg.width as usize));
+        debug_assert!(target < (self.reg.width as usize));
         unsafe { quantum_sys::quantum_toffoli(control1 as i32, control2 as i32, target as i32, self.reg_ptr()) }
     }
 
     /// Applies a Pauli X (NOT) gate to a qubit in the quantum register.
     pub fn sigma_x(&mut self, target: usize) {
-        debug_assert!(target < self.reg.width);
+        debug_assert!(target < (self.reg.width as usize));
         unsafe { quantum_sys::quantum_sigma_x(target as i32, self.reg_ptr()) }
     }
 
     /// Applies a Pauli Y (phase flip) gate to a qubit in the quantum register.
     pub fn sigma_y(&mut self, target: usize) {
-        debug_assert!(target < self.reg.width);
+        debug_assert!(target < (self.reg.width as usize));
         unsafe { quantum_sys::quantum_sigma_y(target as i32, self.reg_ptr()) }
     }
 
     /// Applies a Pauli Z gate to a qubit in the quantum register.
     pub fn sigma_z(&mut self, target: usize) {
-        debug_assert!(target < self.reg.width);
+        debug_assert!(target < (self.reg.width as usize));
         unsafe { quantum_sys::quantum_sigma_z(target as i32, self.reg_ptr()) }
     }
 
     /// Rotates a qubit around the x-axis in the Bloch sphere in the quantum register.
     pub fn rotate_x(&mut self, target: usize, gamma: f32) {
-        debug_assert!(target < self.reg.width);
+        debug_assert!(target < (self.reg.width as usize));
         unsafe { quantum_sys::quantum_r_x(target as i32, gamma, self.reg_ptr()) }
     }
 
     /// Rotates a qubit around the y-axis in the Bloch sphere in the quantum register.
     pub fn rotate_y(&mut self, target: usize, gamma: f32) {
-        debug_assert!(target < self.reg.width);
+        debug_assert!(target < (self.reg.width as usize));
         unsafe { quantum_sys::quantum_r_y(target as i32, gamma, self.reg_ptr()) }
     }
 
     /// Rotates a qubit around the z-axis in the Bloch sphere in the quantum register.
     pub fn rotate_z(&mut self, target: usize, gamma: f32) {
-        debug_assert!(target < self.reg.width);
+        debug_assert!(target < (self.reg.width as usize));
         unsafe { quantum_sys::quantum_r_z(target as i32, gamma, self.reg_ptr()) }
     }
 
     /// Applies a global phase to a qubit in the quantum register.
     pub fn phase(&mut self, target: usize, gamma: f32) {
-        debug_assert!(target < self.reg.width);
+        debug_assert!(target < (self.reg.width as usize));
         unsafe { quantum_sys::quantum_phase_scale(target as i32, gamma, self.reg_ptr()) }
     }
 
     /// Applies a phase shift to a qubit in the quantum register.
     pub fn phaseby(&mut self, target: usize, gamma: f32) {
-        debug_assert!(target < self.reg.width);
+        debug_assert!(target < (self.reg.width as usize));
         unsafe { quantum_sys::quantum_phase_kick(target as i32, gamma, self.reg_ptr()) }
     }
 
     /// Applies the Hadamard gate to a qubit in the quantum register.
     pub fn hadamard(&mut self, target: usize) {
-        debug_assert!(target < self.reg.width);
+        debug_assert!(target < (self.reg.width as usize));
         unsafe { quantum_sys::quantum_hadamard(target as i32, self.reg_ptr()) }
     }
 
@@ -151,7 +155,7 @@ impl QuReg {
     /// More specifically, this method applies a Hadamard gate to the first
     /// `width` qubits in the quantum register.
     pub fn walsh(&mut self, width: usize) {
-        debug_assert!(width < self.reg.width);
+        debug_assert!(width <= (self.reg.width as usize));
         unsafe { quantum_sys::quantum_walsh(width as i32, self.reg_ptr()) }
     }
 
@@ -159,8 +163,8 @@ impl QuReg {
     ///
     /// The applied phase shift is by `pi/2**k` where `k = control - target`
     pub fn cond_phase(&mut self, control: usize, target: usize) {
-        debug_assert!(control < self.reg.width);
-        debug_assert!(target < self.reg.width);
+        debug_assert!(control < (self.reg.width as usize));
+        debug_assert!(target < (self.reg.width as usize));
         unsafe { quantum_sys::quantum_cond_phase(control as i32, target as i32, self.reg_ptr()) }
     }
 
@@ -168,8 +172,8 @@ impl QuReg {
     ///
     /// The applied phase shift is by gamma.
     pub fn cond_phaseby(&mut self, control: usize, target: usize, gamma: f32) {
-        debug_assert!(control < self.reg.width);
-        debug_assert!(target < self.reg.width);
+        debug_assert!(control < (self.reg.width as usize));
+        debug_assert!(target < (self.reg.width as usize));
         unsafe { quantum_sys::quantum_cond_phase_kick(control as i32, target as i32, gamma, self.reg_ptr()) }
     }
 
@@ -178,7 +182,7 @@ impl QuReg {
     /// More specifically, this method applies a QFT to the first
     /// `width` qubits in the quantum register.
     pub fn qft(&mut self, width: usize) {
-        debug_assert!(width < self.reg.width);
+        debug_assert!(width <= (self.reg.width as usize));
         unsafe { quantum_sys::quantum_qft(width as i32, self.reg_ptr()) }
     }
 
@@ -188,7 +192,7 @@ impl QuReg {
     /// More specifically, this method applies an inverse QFT to the first
     /// `width` qubits in the quantum register.
     pub fn qft_inv(&mut self, width: usize) {
-        debug_assert!(width < self.reg.width);
+        debug_assert!(width <= (self.reg.width as usize));
         unsafe { quantum_sys::quantum_qft_inv(width as i32, self.reg_ptr()) }
     }
 
@@ -203,7 +207,7 @@ impl QuReg {
     ///
     /// Returns the result as a Boolean value.
     pub fn measure_bit(&mut self, pos: usize) -> bool {
-        debug_assert!(pos < self.reg.width);
+        debug_assert!(pos < (self.reg.width as usize));
         if pos < self.scratch {
             self.scratch -= 1;
         }
@@ -212,13 +216,13 @@ impl QuReg {
 
     /// Measures a qubit in the quantum register without discarding it.
     pub fn measure_bit_preserve(&mut self, pos: usize) -> bool {
-        debug_assert!(pos < self.reg.width);
+        debug_assert!(pos < (self.reg.width as usize));
         unsafe { quantum_sys::quantum_bmeasure_bitpreserve(pos as i32, self.reg_ptr()) as usize != 0 }
     }
 
     /// Measures the `width` least significant bits of the register, discarding them.
     pub fn measure_width(&mut self, width: usize) -> usize {
-        debug_assert!(width < self.reg.width);
+        debug_assert!(width <= (self.reg.width as usize));
         let mut result = 0;
         for i in 0..width {
             result |= (self.measure_bit(0) as usize) << i;
@@ -234,7 +238,7 @@ impl QuReg {
 
         let mut result = 0;
         for i in iter {
-            debug_assert!(i < self.reg.width);
+            debug_assert!(i < (self.reg.width as usize));
             result |= (self.measure_bit_preserve(i) as usize) << i;
         }
         result
