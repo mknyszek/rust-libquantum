@@ -20,7 +20,7 @@
 
 use quantum_sys::{self, quantum_reg};
 
-use std::fmt;
+use std::fmt::{self, Write};
 
 /// A quantum register.
 ///
@@ -242,6 +242,24 @@ impl QuReg {
             result |= (self.measure_bit_preserve(i) as usize) << i;
         }
         result
+    }
+
+    /// Peeks at the quantum state, generating an informative string.
+    pub fn to_string(&self) -> Result<String, fmt::Error> {
+        let mut s = String::new();
+        unsafe {
+            write!(&mut s, "{:.4}{:+.4}i|{:#b}>",
+                (*self.reg.amplitude).re,
+                (*self.reg.amplitude).im,
+                *self.reg.state)?;
+            for i in 1..(self.reg.size as isize) {
+                write!(&mut s, " + {:.4}{:+.4}i|{:#b}>",
+                    (*self.reg.amplitude.offset(i)).re,
+                    (*self.reg.amplitude.offset(i)).im,
+                    *self.reg.state.offset(i))?;
+            }
+        }
+        Ok(s)
     }
 
     #[inline]
