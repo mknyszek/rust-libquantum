@@ -247,16 +247,17 @@ impl QuReg {
     /// Peeks at the quantum state, generating an informative string.
     pub fn to_string(&self) -> Result<String, fmt::Error> {
         let mut s = String::new();
+        let width = self.width() + self.scratch;
         unsafe {
-            write!(&mut s, "{:.4}{:+.4}i|{:#b}>",
+            write!(&mut s, "({0}{1:+}i)|{2:03$b}>",
                 (*self.reg.amplitude).re,
                 (*self.reg.amplitude).im,
-                *self.reg.state)?;
+                *self.reg.state, width)?;
             for i in 1..(self.reg.size as isize) {
-                write!(&mut s, " + {:.4}{:+.4}i|{:#b}>",
+                write!(&mut s, " + ({0}{1:+}i)|{2:03$b}>",
                     (*self.reg.amplitude.offset(i)).re,
                     (*self.reg.amplitude.offset(i)).im,
-                    *self.reg.state.offset(i))?;
+                    *self.reg.state.offset(i), width)?;
             }
         }
         Ok(s)
@@ -270,7 +271,7 @@ impl QuReg {
 
 impl fmt::Debug for QuReg {
     fn fmt(&self, f: &mut fmt::Formatter) -> fmt::Result {
-        write!(f, "QuReg({}, {})", self.width() - self.scratch, self.scratch)
+        write!(f, "QuReg({}, {})", self.width(), self.scratch)
     }
 }
 
