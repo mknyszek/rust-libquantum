@@ -32,8 +32,25 @@
 //! Adding higher-level bindings should be delegated to a new crate in order
 //! to keep this crate as lean as possible.
 #![crate_type = "lib"]
+extern crate libc;
 
 mod quantum_sys;
 mod qureg;
 
 pub use qureg::QuReg;
+
+/// Re-seed libc's rand() by reading the current time.
+pub fn reseed() {
+    unsafe { libc::srand(libc::time(std::ptr::null_mut()) as u32); }
+}
+
+/// Get the total number of gates executed up until this point.
+pub fn gates() -> usize {
+    unsafe { quantum_sys::quantum_gate_counter(0) as usize } 
+}
+
+/// Reset the gate counter to zero.
+pub fn reset_gates() {
+    unsafe { quantum_sys::quantum_gate_counter(-1); } 
+}
+
