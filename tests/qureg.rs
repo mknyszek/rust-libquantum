@@ -8,6 +8,11 @@ fn width() {
 }
 
 #[test]
+fn get_width() {
+  assert_eq!(libquantum::get_width(3), 2);
+}
+
+#[test]
 fn tensor() {
     let q1 = QuReg::new(2, 0b01);
     let q2 = QuReg::new(2, 0b10);
