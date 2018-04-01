@@ -1,16 +1,15 @@
 [package]
 name = "libquantum"
-version = "0.1.2"
+version = "0.1.3"
 description = "Rust bindings for the libquantum C library."
 repository = "https://github.com/mknyszek/rust-libquantum"
 license = "GPL-3.0"
 readme = "README.md"
-authors = ["Michael Anthony Knyszek <mknyszek@gmail.com>"]
+authors = ["Michael Anthony Knyszek <mknyszek@gmail.com>", "Adam Kelly <adamkelly2201@gmail.com>"]
 build = "build.rs"
 
 [dependencies]
 libc = "0.2"
 
 [build-dependencies]
-glob = "0.2"
 bindgen = "0.20"
