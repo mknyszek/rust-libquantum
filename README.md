@@ -2,7 +2,7 @@
 
 > Bindings for libquantum in Rust
 
-`rust-libquantum` is a library that provides safe bindings to the libquantum
+`rust-libquantum` is a library that provides safe bindings to the libquantum library (v. 1.1.1)
 C library, a quantum simulator.
 
 Like libquantum, rust-libquantum is licensed under GPL-3.0 as it links
@@ -11,7 +11,7 @@ dynamically against libquantum.
 ## Prerequisits
 
 * Rust (install [here](https://www.rustup.rs)).
-* Libquantum (can be installed from [source] or through a package manager, for example `sudo apt-get install libquantum-dev` or `brew install libquantum`)
+* Libquantum (can be installed from [source] or through a package manager, for example `sudo apt-get install libquantum-dev` or `brew install libquantum --devel`)
 
 ## Installation
 
