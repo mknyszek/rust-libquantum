@@ -54,3 +54,7 @@ pub fn reset_gates() {
     unsafe { quantum_sys::quantum_gate_counter(-1); } 
 }
 
+/// Get the number of qubits needed to represent a number
+pub fn get_width(n: i32) -> i32 {
+  unsafe { quantum_sys::quantum_getwidth(n) }
+}
